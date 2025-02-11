@@ -1,0 +1,92 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "title": "Real-time Metrics",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": "Neo4j",
+          "query": "MATCH (r:Reading) WHERE r.timestamp > datetime() - duration('1h') RETURN r.timestamp as time, r.temperature as temperature ORDER BY r.timestamp"
+        }
+      ]
+    },
+    {
+      "title": "AI Analysis",
+      "type": "text",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": "Neo4j",
+          "query": "MATCH (a:Analysis) RETURN a.content as content ORDER BY a.timestamp DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "title": "Active Alerts",
+      "type": "table",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": "Neo4j",
+          "query": "MATCH (a:Alert) WHERE a.status = 'active' RETURN a.type, a.value, a.threshold, a.timestamp ORDER BY a.timestamp DESC"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": ["environment", "monitoring", "ai"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Environmental Analysis Dashboard",
+  "uid": "environmental_analysis",
+  "version": 1
+}
