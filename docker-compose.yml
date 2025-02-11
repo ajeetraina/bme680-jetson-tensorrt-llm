@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  bme680-monitor:
+    build: .
+    privileged: true  # Required for I2C access
+    devices:
+      - /dev/i2c-1:/dev/i2c-1  # Map I2C device
+    environment:
+      - TZ=UTC
+    volumes:
+      - ./config.py:/app/config.py:ro
+      - ./models:/app/models:ro
+    restart: unless-stopped
+    depends_on:
+      - neo4j
+      - grafana
+
+  neo4j:
+    image: neo4j:5.7
+    environment:
+      - NEO4J_AUTH=neo4j/your_password
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=your_password
+
+volumes:
+  neo4j_data:
+  grafana_data:
